@@ -1,0 +1,180 @@
+{
+    "reports": [
+      {
+        "lat": 16.833772777555968,
+        "lng": 96.21259689331056,
+        "township": "Thingan Kyun",
+        "description": "Infinity Tech Store",
+        "status": "pending",
+        "invoice_num": 7126,
+        "id": 1
+      },
+      {
+        "lat": 16.843395077873474,
+        "lng": 96.15663528442384,
+        "township": "Yankin",
+        "description": "Cloud Connectors",
+        "status": "pending",
+        "invoice_num": 7128,
+        "id": 2
+      },
+      {
+        "lat": 16.818910255735205,
+        "lng": 96.165733338301920,
+        "description": "SmartEdge Solutions",
+        "township": "Bahan",
+        "status": "pending",
+        "invoice_num": 7142,
+        "id": 3
+      },
+      {
+        "lat": 16.818980255735205,
+        "lng": 96.16573333740236,
+        "description": "Mega Tech Mart\n",
+        "township": "Bahan",
+        "status": "pending",
+        "invoice_num": 7136,
+        "id": 4
+      },
+      {
+        "lat": 16.848397645843654,
+        "lng": 96.09277725219728,
+        "description": "The Data Den",
+        "township": "Hlaing Thar Yar",
+        "status": "pending",
+        "invoice_num": 7129,
+        "id": 5
+      }
+      
+      
+    ],
+    "shelters": [
+      {
+        "id": 1738259572793,
+        "lat": 16.854895865803815,
+        "lng": 96.13534927368165,
+        "name": "Shelter 1",
+        "contact": "0178013495"
+      },
+      {
+        "id": 1738259572794,
+        "lat": 16.851123,
+        "lng": 96.214174,
+        "name": "Shelter 2", 
+        "contact": "0187564234"
+      },
+      {
+        "id": 1738259572795,
+        "lat": 16.838772,
+        "lng": 96.132584,
+        "name": "Shelter 3",
+        "contact": "0187564234"
+      },
+      {
+        "id": 1738259572796,
+        "lat": 16.775531,
+        "lng": 96.161753,
+        "name": "Shelter 4",
+        "contact": "0187564234"
+      },
+      {
+        "id": 1738259572797,
+        "lat": 16.897241,
+        "lng": 96.199521,
+        "name": "Shelter 5",
+        "contact": "0187564234"
+      },
+      {
+        "id": 1738259572798,
+        "lat": 16.816952,
+        "lng": 96.129873,
+        "name": "Shelter 6",
+        "contact": "0187564234"
+      },
+      {
+        "id": 1738259572799,
+        "lat": 16.846123,
+        "lng": 96.192456,
+        "name": "Shelter 7",
+        "contact": "0187564234"
+      }
+    ],
+    "deliveries": [
+      {
+        "id": 1,
+        "lat": 16.854525865803815,
+        "lng": 96.13534927368165,
+        "shelterId": 1738259572793,
+        "invoiceNum": [
+          7126,
+          7127,
+          7128,
+          7129
+        ],
+        "status": "on the way",
+        "shopName": [
+          "Unique",
+          "CityMart",
+          "Ocean",
+          "MK"
+        ],
+        "driverName": "Ko Tun Lin",
+        "driverContact": "09977777777"
+      },
+      {
+        "id": 2,
+        "lat": 16.854115865803815,
+        "lng": 96.13534927368165,
+        "shelterId": 1738259572793,
+        "invoiceNum": [
+          7130,
+          7131,
+          7132
+        ],
+        "status": "pending",
+        "shopName": [
+          "Infinity Tech Store",
+          "ABC Store",
+          "XYZ Electronics"
+        ],
+        "driverName": "Ko Aung Aung",
+        "driverContact": "09966666666"
+      },
+      {
+        "id": 3,
+        "lat": 16.854355865803815,
+        "lng": 96.13534927368165,
+        "shelterId": 1738259572793,
+        "invoiceNum": [
+          7133,
+          7134,
+          7135
+        ],
+        "status": "completed",
+        "shopName": [
+          "Anycall",
+          "Mobile King",
+          "Phone Valley"
+        ],
+        "driverName": "Ma Aye Aye",
+        "driverContact": "09955555555"
+      },
+      {
+        "id": 4,
+        "lat": 16.85475865803815,
+        "lng": 96.13534927368165,
+        "shelterId": 1738259572793,
+        "invoiceNum": [
+          7136,
+          7137
+        ],
+        "status": "pending",
+        "shopName": [
+          "DigitalHub",
+          "TechZone"
+        ],
+        "driverName": "U Myint Aung",
+        "driverContact": "09944444444"
+      }
+    ]
+  }
