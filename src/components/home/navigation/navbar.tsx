@@ -4,10 +4,62 @@ import { buttonVariants } from "@/components/ui/button";
 import Icons from "@/components/global/icons"
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { logout } from "@/app/logout/actions";
+import { createClient } from '@/utils/supabase/client'
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 
-const Navbar = () => {
+export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
+    const router = useRouter()
+    const [user, setUser] = useState<any>(null)
+    const supabase = createClient()
+
+    useEffect(() => {
+        // Check initial auth state
+        supabase.auth.getUser().then(({ data: { user } }) => {
+            setUser(user)
+            if (user) {
+                toast.success('Successfully logged in!')
+            }
+        })
+
+        // Listen for auth changes
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+            setUser(session?.user ?? null)
+            
+            if (event === 'SIGNED_IN') {
+                toast.success('Successfully logged in!')
+            } else if (event === 'SIGNED_OUT') {
+                toast.success('Successfully logged out!')
+            }
+        })
+
+        return () => {
+            subscription.unsubscribe()
+        }
+    }, [supabase.auth])
+
+    const handleLogout = async () => {
+        const { error } = await supabase.auth.signOut()
+        if (error) {
+            toast.error('Error logging out')
+            return
+        }
+        
+        router.push('/')
+    }
 
     return (
         <header className="px-4 h-14 sticky top-0 inset-x-0 w-full bg-gradient-to-b from-orange-50/80 to-rose-50/80 dark:from-zinc-900/80 dark:to-zinc-900/80 backdrop-blur-sm border-b border-border z-50">
@@ -85,12 +137,12 @@ const Navbar = () => {
                                 </Link>
                             </li>
                             <li className="pt-4">
-                                <Link href="/sign-in" className={buttonVariants({ size: "sm", variant: "ghost", className: "w-full justify-center" })}>
+                                <Link href="/login" className={buttonVariants({ size: "sm", variant: "ghost", className: "w-full justify-center" })}>
                                     Login
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/sign-up" className={buttonVariants({ size: "sm", className: "w-full justify-center" })}>
+                                <Link href="/signup" className={buttonVariants({ size: "sm", className: "w-full justify-center" })}>
                                     Start free trial
                                 </Link>
                             </li>
@@ -100,12 +152,46 @@ const Navbar = () => {
 
                 {/* Desktop Auth Buttons */}
                 <div className="hidden md:flex items-center gap-4">
-                    <Link href="/sign-in" className={buttonVariants({ size: "sm", variant: "ghost" })}>
-                        Login
-                    </Link>
-                    <Link href="/sign-up" className={buttonVariants({ size: "sm" })}>
-                        Start free trial
-                    </Link>
+                    {user ? (
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button className="relative h-8 w-8 rounded-full bg-transparent hover:bg-gray-100 dark:hover:bg-zinc-800">
+                                    <Avatar className="h-8 w-8">
+                                        <AvatarImage src={user.user_metadata.avatar_url || ''} alt={user.email || ''} />
+                                        <AvatarFallback>{user.email?.charAt(0).toUpperCase()}</AvatarFallback>
+                                    </Avatar>
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent className="w-56" align="end" forceMount>
+                                <DropdownMenuLabel className="font-normal">
+                                    <div className="flex flex-col space-y-1">
+                                        <p className="text-sm font-medium leading-none">{user.email}</p>
+                                        <p className="text-xs leading-none text-muted-foreground">
+                                            Logged in
+                                        </p>
+                                    </div>
+                                </DropdownMenuLabel>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem>
+                                    <button 
+                                        onClick={handleLogout}
+                                        className="w-full text-left text-red-600"
+                                    >
+                                        Log out
+                                    </button>
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    ) : (
+                        <div className="flex items-center gap-4">
+                            <Link href="/login" className={buttonVariants({ variant: "ghost", size: "sm" })}>
+                                Login
+                            </Link>
+                            <Link href="/signup" className={buttonVariants({ size: "sm" })}>
+                                Sign Up
+                            </Link>
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -118,6 +204,4 @@ const Navbar = () => {
             )}
         </header>
     );
-};
-
-export default Navbar;
+}

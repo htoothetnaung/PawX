@@ -9,7 +9,7 @@ interface Props {
 export default function MapLayout({ children }: Props) {
     return (
         <div className="flex flex-col min-h-screen">
-            <Navbar />
+           
             <main className="flex-grow relative">
                 <div className="absolute top-4 left-4 z-50 bg-white p-4 rounded-lg shadow-md">
                     <h3 className="font-semibold mb-2">Map Legend</h3>

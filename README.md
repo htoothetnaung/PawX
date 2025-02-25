@@ -26,10 +26,7 @@ Make sure that you have installed
 
 1. Clone this repository:
 
-   ```bash
-   git clone https://github.com/Shreyas-29/astra-website.git
-   cd astra-website
-   ```
+  
 
 2. Install dependencies:
    ```bash
@@ -54,5 +51,7 @@ Make sure that you have installed
 4. Run the development server:
    ```bash
    npm run dev
+
+   npx json-server --watch data/db.json --port 3001
    ```
 5. Open your browser and navigate to http://localhost:3000 to see the website in action.
