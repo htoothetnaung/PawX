@@ -52,6 +52,6 @@ Make sure that you have installed
    ```bash
    npm run dev
 
-   npx json-server --watch data/db.json --port 3001
+   npx json-server --watch mock/db.json --port 3001
    ```
 5. Open your browser and navigate to http://localhost:3000 to see the website in action.

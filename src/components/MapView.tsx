@@ -1,12 +1,15 @@
+'use client'
+
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents, Polyline, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import { api, Report, Shelter, Delivery } from '../services/api';
+import { supabaseApi, type Report, type Shelter } from '@/services/supabase';
 import axios from 'axios';
 import L from 'leaflet';
 import { YANGON_TOWNSHIPS } from '@/constants/townships';
 import '@/styles/MapView.css'
+import { Delivery } from '@/services/api';
 const carIconUrl = '@/public/assets/car.png';
 
 
@@ -67,9 +70,11 @@ const location_gp4: string[] = [YANGON_TOWNSHIPS.Lanmadaw, YANGON_TOWNSHIPS.Lath
 interface MapViewProps {
   selectedShelterId: number | null;
   userLocation: [number, number] | null;
+  isSelectingLocation?: boolean;
+  onLocationSelect?: (location: { lat: number; lng: number }) => void;
 }
 
-const MapView: React.FC<MapViewProps> = ({ selectedShelterId, userLocation: initialUserLocation }) => {
+const MapView: React.FC<MapViewProps> = ({ selectedShelterId, userLocation: initialUserLocation, isSelectingLocation, onLocationSelect }) => {
   const [position, setPosition] = useState<[number, number]>([16.8397, 96.1444]);
   const [reports, setReports] = useState<Report[]>([]);
   const [shelters, setShelters] = useState<Shelter[]>([]);
@@ -79,7 +84,7 @@ const MapView: React.FC<MapViewProps> = ({ selectedShelterId, userLocation: init
   const [formType, setFormType] = useState<'shelter' | 'report' | null>(null);
   const [routePolyline, setRoutePolyline] = useState<[number, number][]>([]);
   const [travelTime, setTravelTime] = useState<number | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [optimizedRoute, setOptimizedRoute] = useState<[number, number][]>([]);
   const [totalTravelTime, setTotalTravelTime] = useState<number | null>(null);
 
@@ -150,10 +155,10 @@ const MapView: React.FC<MapViewProps> = ({ selectedShelterId, userLocation: init
 
         const routeInfo = {
           deliveryId: shelter.id,
-          shopName: shelter.name,
+          shopName: shelter.shelter_name,
           totalTime: Math.round(routeResponse.data.routes[0].duration / 60),
           reports: [{
-            description: `Route to ${shelter.name}`,
+            description: `Route to ${shelter.shelter_name}`,
             distance: 0 // We'll calculate this if needed
           }]
         };
@@ -266,10 +271,28 @@ const MapView: React.FC<MapViewProps> = ({ selectedShelterId, userLocation: init
 
   // Fetch initial data
   useEffect(() => {
-    api.getShelters().then((res) => setShelters(res.data));
-    api.getReports().then((res) => setReports(res.data));
-    api.getDeliveries().then((res) => setDeliveries(res.data));
-  }, []);
+    const fetchData = async () => {
+      try {
+        console.log('Fetching data...')
+        const [reportsData, sheltersData] = await Promise.all([
+          supabaseApi.getReports(),
+          supabaseApi.getShelters()
+        ])
+        console.log('Fetched shelters:', sheltersData) // Debug log
+        setReports(reportsData)
+        setShelters(sheltersData)
+      } catch (error) {
+        console.error('Error fetching data:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [])
+
+  // Add debug log for render
+  console.log('Current shelters state:', shelters)
 
   // Add event listener for driver selection
   useEffect(() => {
@@ -340,17 +363,17 @@ const MapView: React.FC<MapViewProps> = ({ selectedShelterId, userLocation: init
           executionTime: Math.round(executionTime),
           overallProximityStats: `Distance to shelter: ${nearestShelter.distance.toFixed(2)}km`,
           routeProximityStats: {
-            1: `Direct route to ${nearestShelter.name}`,
+            1: `Direct route to ${nearestShelter.shelter_name}`,
           }
         });
 
         // Create route summary
         const routeInfo = {
           deliveryId: 1,
-          shopName: nearestShelter.name,
+          shopName: nearestShelter.shelter_name,
           totalTime: Math.round(routeResponse.data.routes[0].duration / 60),
           reports: [{
-            description: `Route to ${nearestShelter.name}`,
+            description: `Route to ${nearestShelter.shelter_name}`,
             distance: nearestShelter.distance
           }]
         };
@@ -358,7 +381,7 @@ const MapView: React.FC<MapViewProps> = ({ selectedShelterId, userLocation: init
         setRouteInfos([routeInfo]);
         setIsInfoMinimized(false);
 
-        alert(`Route Created!\n\nTotal travel time: ${Math.round(routeResponse.data.routes[0].duration / 60)} minutes\n\nDestination: ${nearestShelter.name}`);
+        alert(`Route Created!\n\nTotal travel time: ${Math.round(routeResponse.data.routes[0].duration / 60)} minutes\n\nDestination: ${nearestShelter.shelter_name}`);
       }
     } catch (error) {
       console.error('Failed to calculate route:', error);
@@ -681,15 +704,17 @@ const MapView: React.FC<MapViewProps> = ({ selectedShelterId, userLocation: init
   function MapClickHandler() {
     useMapEvents({
       click: (e) => {
-        setSelectedPosition([e.latlng.lat, e.latlng.lng]);
-        setShowForm(true);
-        setFormType(null);
+        if (isSelectingLocation && onLocationSelect) {
+          onLocationSelect({ lat: e.latlng.lat, lng: e.latlng.lng })
+        }
       },
-    });
-    return null;
+    })
+    return null
   }
 
   // Handle form submission move to under with direct encoding with ui
+
+  if (isLoading) return <div>Loading...</div>
 
   return (
     <div style={{ height: '90vh', width: '100%' }}>
@@ -849,10 +874,13 @@ const MapView: React.FC<MapViewProps> = ({ selectedShelterId, userLocation: init
         </div>
       )}
 
-
-      <MapContainer center={position} zoom={13} style={{ height: '100%', width: '100%' }}>
-        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+      <MapContainer 
+        center={position} 
+        zoom={13} 
+        style={{ height: '100%', width: '100%' }}
+      >
         <MapClickHandler />
+        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
 
         {/* Add Driver Location Marker */}
@@ -928,7 +956,7 @@ const MapView: React.FC<MapViewProps> = ({ selectedShelterId, userLocation: init
         {shelters.map((shelter) => (
           <Marker key={shelter.id} position={[shelter.lat, shelter.lng]} icon={DefaultIcon}>
             <Popup>
-              <h4>{shelter.name}</h4>
+              <h4>{shelter.shelter_name}</h4>
               <p>Contact: {shelter.contact}</p>
               <button onClick={() => calculateTravelTime([shelter.lat, shelter.lng])}>
                 🚗 Get Directions
