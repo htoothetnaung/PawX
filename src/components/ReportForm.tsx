@@ -35,7 +35,14 @@ export default function ReportForm({
     setLoading(true)
 
     try {
-      const formData = new FormData(e.currentTarget)
+      // Get current user
+      const { data: { user }, error: userError } = await supabase.auth.getUser()
+      if (userError || !user) {
+        throw new Error('User not authenticated')
+      }
+
+      const form = e.target as HTMLFormElement
+      const formElements = form.elements as HTMLFormControlsCollection
       const photoUrls: string[] = []
 
       // Upload photos to Supabase Storage
@@ -53,17 +60,18 @@ export default function ReportForm({
         }
       }
 
-      // Create report
+      // Create report with form values
       const { error } = await supabase.from('reports').insert({
+        user_id: user.id,
         lat: location?.lat,
         lng: location?.lng,
-        township: formData.get('township'),
-        pet_type: formData.get('pet_type'),
-        report_type: formData.get('report_type'),
-        urgency_level: formData.get('urgency_level'),
-        description: formData.get('description'),
+        township: (formElements.namedItem('township') as HTMLInputElement)?.value,
+        pet_type: (formElements.namedItem('pet_type') as HTMLSelectElement)?.value,
+        report_type: (formElements.namedItem('report_type') as HTMLSelectElement)?.value,
+        urgency_level: (formElements.namedItem('urgency_level') as HTMLSelectElement)?.value,
+        description: (formElements.namedItem('description') as HTMLTextAreaElement)?.value,
         photo_url: photoUrls,
-        reporter_contact: formData.get('reporter_contact'),
+        reporter_contact: (formElements.namedItem('reporter_contact') as HTMLInputElement)?.value,
       })
 
       if (error) throw error
@@ -80,12 +88,12 @@ export default function ReportForm({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] bg-white rounded-lg shadow-lg z-[9999]">
         <DialogHeader>
           <DialogTitle>Submit Report</DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 p-6">
           {isSelectingLocation ? (
             <p className="text-sm text-muted-foreground">
               Click on the map to select a location

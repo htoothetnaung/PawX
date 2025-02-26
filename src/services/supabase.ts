@@ -82,5 +82,29 @@ export const supabaseApi = {
       }))
       .sort((a, b) => a.distance - b.distance)
       .slice(0, limit)
+  },
+
+  async getUserReports() {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) throw new Error('Not authenticated')
+
+    const { data, error } = await supabase
+      .from('reports')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false })
+
+    if (error) throw error
+    return data as Report[]
+  },
+
+  async getAllReports() {
+    const { data, error } = await supabase
+      .from('reports')
+      .select('*')
+      .order('created_at', { ascending: false })
+
+    if (error) throw error
+    return data as Report[]
   }
 } 

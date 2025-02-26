@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
-import { supabaseApi, type Shelter } from '@/services/supabase';
+import { supabaseApi, type Shelter, type Report } from '@/services/supabase';
 import { calculateDistance } from '@/utils/mapUtils';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -24,6 +24,7 @@ export default function MapPage() {
     const [isReportFormOpen, setIsReportFormOpen] = useState(false);
     const [isSelectingLocation, setIsSelectingLocation] = useState(false);
     const [selectedLocation, setSelectedLocation] = useState<{lat: number, lng: number} | null>(null);
+    const [reports, setReports] = useState<Report[]>([]);
 
     // Get user location
     useEffect(() => {
@@ -38,6 +39,19 @@ export default function MapPage() {
                 }
             );
         }
+    }, []);
+
+    useEffect(() => {
+        // Fetch reports when component mounts
+        const fetchReports = async () => {
+            try {
+                const data = await supabaseApi.getUserReports();
+                setReports(data);
+            } catch (error) {
+                console.error('Error fetching reports:', error);
+            }
+        };
+        fetchReports();
     }, []);
 
     const findNearestShelters = async () => {
@@ -78,7 +92,7 @@ export default function MapPage() {
     };
 
     return (
-        <div className="container mx-auto px-4 py-8">
+        <>
             <div className="mb-4 flex gap-4 items-center flex-wrap">
                 <Button onClick={handleReportCurrentLocation}>
                     📍 Report Current Location
@@ -111,30 +125,27 @@ export default function MapPage() {
                 )}
             </div>
             
-            <div className="relative">
-                <div className="w-full h-[calc(100vh-200px)] rounded-lg overflow-hidden">
-                    <MapView 
-                        selectedShelterId={selectedShelterId}
-                        userLocation={userLocation}
-                        isSelectingLocation={isSelectingLocation}
-                        onLocationSelect={handleLocationSelect}
-                    />
-                </div>
-
-                <div className="absolute inset-0 z-50">
-                    <ReportForm
-                        isOpen={isReportFormOpen}
-                        onClose={() => {
-                            setIsReportFormOpen(false);
-                            setIsSelectingLocation(false);
-                            setSelectedLocation(null);
-                        }}
-                        location={selectedLocation}
-                        isSelectingLocation={isSelectingLocation}
-                        onLocationSelect={handleLocationSelect}
-                    />
-                </div>
+            <div className="relative w-full h-[calc(100vh-200px)] rounded-lg overflow-hidden">
+                <MapView 
+                    selectedShelterId={selectedShelterId}
+                    userLocation={userLocation}
+                    isSelectingLocation={isSelectingLocation}
+                    onLocationSelect={handleLocationSelect}
+                    reports={reports}
+                />
             </div>
-        </div>
+
+            <ReportForm
+                isOpen={isReportFormOpen}
+                onClose={() => {
+                    setIsReportFormOpen(false);
+                    setIsSelectingLocation(false);
+                    setSelectedLocation(null);
+                }}
+                location={selectedLocation}
+                isSelectingLocation={isSelectingLocation}
+                onLocationSelect={handleLocationSelect}
+            />
+        </>
     );
 }

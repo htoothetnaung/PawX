@@ -73,4 +73,18 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Add these styles */
+[data-overlay-container] {
+  z-index: 9998;
+}
+
+.dialog-overlay {
+  z-index: 9998;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.dialog-content {
+  z-index: 9999;
 } 

@@ -10,7 +10,7 @@ import L from 'leaflet';
 import { YANGON_TOWNSHIPS } from '@/constants/townships';
 import '@/styles/MapView.css'
 import { Delivery } from '@/services/api';
-const carIconUrl = '@/public/assets/car.png';
+const carIconUrl = '/assets/car.png';
 
 
 // Fix Leaflet marker icons
@@ -45,9 +45,10 @@ const PurpleIcon = L.icon({
 });
 
 const customDriverIcon = L.icon({
-  iconUrl: "/truck-icon.png", // Use your own truck image
+  iconUrl: carIconUrl,
   iconSize: [32, 32],
   iconAnchor: [16, 32],
+  popupAnchor: [0, -32]
 });
 
 L.Marker.prototype.options.icon = DefaultIcon;
@@ -72,11 +73,11 @@ interface MapViewProps {
   userLocation: [number, number] | null;
   isSelectingLocation?: boolean;
   onLocationSelect?: (location: { lat: number; lng: number }) => void;
+  reports: Report[];
 }
 
-const MapView: React.FC<MapViewProps> = ({ selectedShelterId, userLocation: initialUserLocation, isSelectingLocation, onLocationSelect }) => {
+const MapView: React.FC<MapViewProps> = ({ selectedShelterId, userLocation: initialUserLocation, isSelectingLocation, onLocationSelect, reports }) => {
   const [position, setPosition] = useState<[number, number]>([16.8397, 96.1444]);
-  const [reports, setReports] = useState<Report[]>([]);
   const [shelters, setShelters] = useState<Shelter[]>([]);
   const [userLocation, setUserLocation] = useState<[number, number] | null>(initialUserLocation);
   const [showForm, setShowForm] = useState(false);
@@ -279,7 +280,7 @@ const MapView: React.FC<MapViewProps> = ({ selectedShelterId, userLocation: init
           supabaseApi.getShelters()
         ])
         console.log('Fetched shelters:', sheltersData) // Debug log
-        setReports(reportsData)
+        // setReports(reportsData)
         setShelters(sheltersData)
       } catch (error) {
         console.error('Error fetching data:', error)
@@ -852,12 +853,12 @@ const MapView: React.FC<MapViewProps> = ({ selectedShelterId, userLocation: init
                       }}
                     />
                   </h4>
-                  <p><strong>Total Time:</strong> {info.totalTime} minutes</p>
+                  <p><strong>Total Time:</strong> {info.totalTime + 20} minutes</p>
                   <p><strong>Assigned Deliveries:</strong></p>
                   <ul style={{ margin: '5px 0', paddingLeft: '20px' }}>
                     {info.reports.map((report, index) => (
                       <li key={index}>
-                        {report.description} ({report.distance} km)
+                        {report.description} ({report.distance + 1} km)
                       </li>
                     ))}
                   </ul>
@@ -1020,9 +1021,21 @@ const MapView: React.FC<MapViewProps> = ({ selectedShelterId, userLocation: init
           </Polyline>
         ))}
 
+        {/* Show reports markers */}
         {reports.map((report) => (
-          <Marker key={report.id} position={[report.lat, report.lng]} icon={RedIcon}>
-            <Popup>{report.description}</Popup>
+          <Marker
+            key={report.id}
+            position={[report.lat, report.lng]}
+            icon={RedIcon}
+          >
+            <Popup>
+              <div className="p-2">
+                <h3 className="font-bold">{report.pet_type} - {report.report_type}</h3>
+                <p>Status: {report.status}</p>
+                <p>Urgency: {report.urgency_level}</p>
+                <p>{report.description}</p>
+              </div>
+            </Popup>
           </Marker>
         ))}
 
@@ -1088,7 +1101,7 @@ const MapView: React.FC<MapViewProps> = ({ selectedShelterId, userLocation: init
             zIndex: 1000,
           }}
         >
-          <strong>Total Route Time:</strong> {totalTravelTime + 30}  minutes
+          <strong>Total Route Time:</strong> {totalTravelTime + 20}  minutes
         </div>
       )}
 
@@ -1287,5 +1300,13 @@ const RouteAnimation: React.FC<{ route: [number, number][] }> = ({ route }) => {
 
   return null;
 };
+
+// Add report marker icon
+const reportIcon = L.icon({
+  iconUrl: '/report-marker.png', // Add a red pin marker image to public folder
+  iconSize: [25, 25],
+  iconAnchor: [12, 25],
+  popupAnchor: [0, -25],
+})
 
 export default MapView;
