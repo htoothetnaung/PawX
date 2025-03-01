@@ -5,7 +5,6 @@ import uvicorn
 import pandas as pd
 import numpy as np
 import os
-import cv2
 import h5py
 from tensorflow.keras.applications.vgg16 import VGG16, preprocess_input
 from tensorflow.keras.preprocessing.image import load_img, img_to_array
@@ -21,7 +20,7 @@ try:
     print(f"Successfully loaded data with {len(data)} records")
     
     # Check if images directory exists
-    if not os.path.exists("input/images"):
+    if not os.path.exists("unknown_"):
         print("Warning: input/images directory not found!")
         os.makedirs("input/images", exist_ok=True)
     
@@ -40,18 +39,10 @@ except Exception as e:
     print(f"Error loading CSV file: {e}")
     raise
 
-# Allow CORS for Streamlit frontend
-# app.add_middleware(
-#     CORSMiddleware,
-#     allow_origins=["http://localhost:5173"],
-#     allow_methods=["*"],
-#     allow_headers=["*"],
-# )
-
 # Allow CORS for next.js frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -87,11 +78,10 @@ async def get_image(image_name: str):
         return FileResponse(image_path)
     return {"error": "Image not found"}
 
-
 # API endpoint for recommendations
 @app.post("/recommend-pets")
 async def recommend_pets(user_preferences: dict):
-    data = load_data()
+    data = pd.read_csv("input/recommendation.csv")
     X_preprocessed, user_input_encoded = preprocess_data(data, user_preferences)
     similarity_scores = cosine_similarity(user_input_encoded, X_preprocessed)[0]
     data['Similarity'] = similarity_scores
@@ -108,36 +98,36 @@ async def recommend_pets(user_preferences: dict):
 
     # Prepare response
     recommendations = []
+    seen_pet_ids = set()
     for _, pet in top_recommendations.iterrows():
-        valid_images = []
-        
-        if isinstance(pet['image_paths'], str):
-            image_paths = pet['image_paths'].strip("[]").replace("'", "").split(", ")
-            for image_path in image_paths:
-                image_name = os.path.basename(image_path)
-                valid_images.append(f"http://localhost:8000/images/{image_name}")  # Updated URL
-        
-        if valid_images:
-            recommendations.append({
-                "name": pet['Name'],
-                "breed": pet['Breed1_Name'],
-                "similarity": float(pet['Similarity']),
-                "type": pet['Type'],
-                "gender": pet['Gender'],
-                "age": int(pet['Age(months)']),
-                "color": pet['Color1_Name'],
-                "maturity_size": pet['MaturitySize'],
-                "fur_length": pet['FurLength'],
-                "fee": float(pet['Fee']),
-                "health": pet['Health'],
-                "images": valid_images[:3]  # Limit to 3 images
-            })
+        pet_id = pet['PetID']
+        if pet_id not in seen_pet_ids:
+            seen_pet_ids.add(pet_id)
+            valid_images = []
+            
+            if isinstance(pet['image_paths'], str):
+                image_paths = pet['image_paths'].strip("[]").replace("'", "").split(", ")
+                for image_path in image_paths:
+                    image_name = os.path.basename(image_path)
+                    valid_images.append(f"http://localhost:8000/images/{image_name}")  # Updated URL
+            
+            if valid_images:
+                recommendations.append({
+                    "name": pet['Name'],
+                    "breed": pet['Breed1_Name'],
+                    "similarity": float(pet['Similarity']),
+                    "type": pet['Type'],
+                    "gender": pet['Gender'],
+                    "age": int(pet['Age(months)']),
+                    "color": pet['Color1_Name'],
+                    "maturity_size": pet['MaturitySize'],
+                    "fur_length": pet['FurLength'],
+                    "fee": float(pet['Fee']),
+                    "health": pet['Health'],
+                    "images": valid_images[:1]  # Limit to 1 image per pet
+                })
 
     return {"recommendations": recommendations}
-
-
-
-
 
 # Load pre-trained model (VGG16)
 model = VGG16(include_top=False, input_shape=(224, 224, 3))
@@ -151,7 +141,7 @@ def extract_features(image_path):
     features = model.predict(img_array)
     return features.flatten()
 
-def generate_features_file(image_folder="input/images", output_file="found_pet_features.h5"):
+def generate_features_file(image_folder="input/unknown_images", output_file="found_pets.h5"):
     """Generate features file from images."""
     file_paths = []
     features_list = []
@@ -174,7 +164,7 @@ def generate_features_file(image_folder="input/images", output_file="found_pet_f
     
     return file_paths, features_list
 
-def load_features_from_hdf5(file="found_pet_features.h5"):
+def load_features_from_hdf5(file="found_pets.h5"):
     """Load features from an HDF5 file."""
     with h5py.File(file, "r") as f:
         found_pets = list(f["file_paths"])
@@ -187,8 +177,8 @@ def load_features_from_hdf5(file="found_pet_features.h5"):
     return found_pets, found_pet_features
 
 # Add this debug check before using the features
-if not os.path.exists("found_pet_features.h5"):
-    print("Error: found_pet_features.h5 file not found!")
+if not os.path.exists("found_pets.h5"):
+    print("Error: found_pets.h5 file not found!")
     # Generate the features file
     print("Generating features file...")
     found_pets, found_pet_features = generate_features_file()
@@ -229,22 +219,29 @@ async def find_matching_pets(uploaded_file: UploadFile = File(...)):
         top_matches = [(found_pets[i], similarities[i]) for i in sorted_indices]
 
         results = []
+        seen_pet_ids = set()
         for pet_path, similarity in top_matches:
-            pet_index = found_pets.index(pet_path)
-            pet_details = data.iloc[pet_index]
-            results.append({
-                "name": pet_details['Name'],
-                "breed": pet_details['Breed1_Name'],
-                "type": pet_details['Type'],
-                "gender": pet_details['Gender'],
-                "age": int(pet_details['Age(months)']),
-                "color": pet_details['Color1_Name'],
-                "maturity_size": pet_details['MaturitySize'],
-                "fur_length": pet_details['FurLength'],
-                "health": pet_details['Health'],
-                "image_url": f"http://localhost:8000/images/{os.path.basename(pet_path)}",
-                "similarity": float(similarity)
-            })
+            pet_id = os.path.basename(pet_path).split('-')[0]
+            if pet_id not in seen_pet_ids:
+                seen_pet_ids.add(pet_id)
+                # Check if pet_id exists in the data DataFrame
+                if pet_id in data['PetID'].values:
+                    pet_details = data[data['PetID'] == pet_id].iloc[0]
+                    results.append({
+                        "name": pet_details['Name'],
+                        "breed": pet_details['Breed1_Name'],
+                        "type": pet_details['Type'],
+                        "gender": pet_details['Gender'],
+                        "age": int(pet_details['Age(months)']),
+                        "color": pet_details['Color1_Name'],
+                        "maturity_size": pet_details['MaturitySize'],
+                        "fur_length": pet_details['FurLength'],
+                        "health": pet_details['Health'],
+                        "image_url": f"http://localhost:8000/images/{os.path.basename(pet_path)}",
+                        "similarity": float(similarity)
+                    })
+                else:
+                    print(f"PetID {pet_id} not found in data DataFrame")
         
         return {"matches": results}
 
@@ -254,7 +251,6 @@ async def find_matching_pets(uploaded_file: UploadFile = File(...)):
         import traceback
         print(f"Traceback: {traceback.format_exc()}")
         raise HTTPException(status_code=500, detail=str(e))
-
 
 # Run the API
 if __name__ == "__main__":
