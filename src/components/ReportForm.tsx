@@ -26,6 +26,7 @@ export default function ReportForm({
   isSelectingLocation,
   onLocationSelect
 }: ReportFormProps) {
+  console.log("ReportForm props:", { isOpen, location, isSelectingLocation });
   const supabase = createClient()
   const [loading, setLoading] = useState(false)
   const [photos, setPhotos] = useState<File[]>([])
