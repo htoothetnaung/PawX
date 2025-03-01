@@ -21,6 +21,9 @@ export default function AIPage() {
   const [error, setError] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [showStreamlit, setShowStreamlit] = useState(false); // State to toggle visibility
+
+  const streamlitAppUrl = "https://pet-image-analyzer.streamlit.app/?embedded=true";
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -39,7 +42,6 @@ export default function AIPage() {
         Color1_Name: formData.get('Color1_Name'),
       };
       
-      // Validate required fields
       if (!preferences.Type || !preferences.Gender || !preferences.MaturitySize) {
         setError('Please fill in all required fields');
         return;
@@ -68,8 +70,6 @@ export default function AIPage() {
     } catch (err) {
       console.error('Image upload error:', err);
       setError(err instanceof Error ? err.message : 'An unexpected error occurred');
-      
-      // Clear the file input on error
       setSelectedFile(null);
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
@@ -79,24 +79,19 @@ export default function AIPage() {
     }
   };
 
-  // Add a ref for the file input
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Update the file change handler
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setSelectedFile(file);
-      // Create preview URL
       const previewUrl = URL.createObjectURL(file);
       setImagePreview(previewUrl);
     }
   };
 
-  // Add cleanup for preview URL
   useEffect(() => {
     return () => {
-      // Cleanup preview URL when component unmounts
       if (imagePreview) {
         URL.revokeObjectURL(imagePreview);
       }
@@ -112,6 +107,18 @@ export default function AIPage() {
       <p className="text-center text-gray-600 mb-4">
         Our Matching model is designed to help you find your lost pets in our shelter database.
       </p>
+
+      {/* Button to Toggle Streamlit App Link with Debug */}
+      <div className="text-center mb-6">
+        <Button
+          onClick={() => {
+            console.log("Toggling showStreamlit to:", !showStreamlit);
+            setShowStreamlit(!showStreamlit);
+          }}
+        >
+          {showStreamlit ? 'Hide Image Analyzer' : 'Show Pet Image Analyzer'}
+        </Button>
+      </div>
 
       <div className="grid gap-4 md:grid-cols-2">
         {/* Pet Recommendations Form */}
@@ -222,9 +229,8 @@ export default function AIPage() {
               Upload a pet image to find similar pets in our database
             </p>
             <form className="space-y-4">
-              <div className="grid gap-4">
-                {/* File Input Wrapper */}
-                <div className="relative">
+              <div className="flex flex-col items-center gap-4">
+                <div className="relative w-96"> {/* Increased to w-96 (384px) */}
                   <input
                     ref={fileInputRef}
                     type="file"
@@ -236,7 +242,7 @@ export default function AIPage() {
                   />
                   <label
                     htmlFor="file-upload"
-                    className="flex flex-col items-center justify-center w-full h-32 px-4 transition bg-white border-2 border-gray-300 border-dashed rounded-md appearance-none cursor-pointer hover:border-gray-400 focus:outline-none"
+                    className="flex flex-col items-center justify-center w-full h-48 px-4 transition bg-white border-2 border-gray-300 border-dashed rounded-md appearance-none cursor-pointer hover:border-gray-400 focus:outline-none" // Increased to h-48 (192px)
                   >
                     {imagePreview ? (
                       <div className="relative w-full h-full">
@@ -299,12 +305,11 @@ export default function AIPage() {
                   </label>
                 </div>
 
-                {/* Submit Button */}
                 <Button 
                   type="button" 
                   disabled={loading || !selectedFile}
                   onClick={() => selectedFile && handleImageUpload(selectedFile)}
-                  className="w-full"
+                  className="w-96" // Increased to w-96 (384px)
                 >
                   {loading ? (
                     <div className="flex items-center justify-center">
@@ -389,7 +394,7 @@ export default function AIPage() {
                     </div>
                     <div className="space-y-1">
                       <h3 className="font-semibold">{pet.name || 'Unknown'}</h3>
-                      <p className="text-sm text-gray-600">Breed: {pet.breed || 'Unknown'}</p>
+                      <p className="text-sm text-gray-200">Breed: {pet.breed || 'Unknown'}</p>
                       <p className="text-sm text-gray-600">Type: {pet.type || 'Unknown'}</p>
                       <p className="text-sm text-gray-600">Gender: {pet.gender || 'Unknown'}</p>
                       <p className="text-sm text-gray-600">Age: {pet.age || 0} months</p>
@@ -423,6 +428,22 @@ export default function AIPage() {
                 </Button>
               </div>
             )}
+          </Card>
+        )}
+
+        {/* Streamlit App Iframe (Shown only when toggled) */}
+        {showStreamlit && (
+          <Card className="mt-6 p-0 col-span-2" style={{ border: 'none', boxShadow: 'none' }}>
+            <div className="w-full">
+              <iframe
+                src={streamlitAppUrl}
+                width="100%"
+                height="1000px"
+                className="border-0"
+                title="Pet Image Analyzer"
+                style={{ margin: 0, padding: 0 }}
+              ></iframe>
+            </div>
           </Card>
         )}
       </div>
