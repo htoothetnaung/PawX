@@ -1,6 +1,6 @@
-import Icons from "@/components/global/icons"
-import { Heart } from 'lucide-react'
-import Link from 'next/link'
+import Icons from "@/components/global/icons";
+import { Heart } from 'lucide-react';
+import Link from 'next/link';
 
 const Footer = () => {
     return (
@@ -36,22 +36,22 @@ const Footer = () => {
                         </h3>
                         <ul className="mt-4 text-sm text-black">
                             <li className="mt-2">
-                                <Link href="/ai" className="text-black hover:text-foreground transition-all duration-300">
+                                <Link href="/ai" className="text-black hover:text-blue-500 transition-all duration-300">
                                     AI Pet Recognition
                                 </Link>
                             </li>
                             <li className="mt-2">
-                                <Link href="/map" className="text-black hover:text-foreground transition-all duration-300">
+                                <Link href="/map" className="text-black hover:text-blue-500 transition-all duration-300">
                                     Lost Pet Map
                                 </Link>
                             </li>
                             <li className="mt-2">
-                                <Link href="/petSpa" className="text-black hover:text-foreground transition-all duration-300">
+                                <Link href="/petSpa" className="text-black hover:text-blue-500 transition-all duration-300">
                                     Pet Spa Services
                                 </Link>
                             </li>
                             <li className="mt-2">
-                                <Link href="/c2c" className="text-black hover:text-foreground transition-all duration-300">
+                                <Link href="/c2c" className="text-black hover:text-blue-500 transition-all duration-300">
                                     Pet Marketplace
                                 </Link>
                             </li>
@@ -64,17 +64,17 @@ const Footer = () => {
                         </h3>
                         <ul className="mt-4 text-sm text-black">
                             <li className="mt-2">
-                                <Link href="https://github.com/htoothetnaung/PawX" target="_blank" className="text-black hover:text-foreground transition-all duration-300 flex items-center gap-2">
+                                <Link href="https://github.com/htoothetnaung/PawX" target="_blank" className="text-black hover:text-blue-500 transition-all duration-300 flex items-center gap-2">
                                     GitHub
                                 </Link>
                             </li>
                             <li className="mt-2">
-                                <Link href="https://uit.edu.mm" target="_blank" className="text-black hover:text-foreground transition-all duration-300 flex items-center gap-2">
+                                <Link href="https://uit.edu.mm" target="_blank" className="text-black hover:text-blue-500 transition-all duration-300 flex items-center gap-2">
                                     UIT
                                 </Link>
                             </li>
                             <li className="mt-2">
-                                <Link href="https://pet-image-analyzer.streamlit.app/" target="_blank" className="text-black hover:text-foreground transition-all duration-300 flex items-center gap-2">
+                                <Link href="https://pet-image-analyzer.streamlit.app/" target="_blank" className="text-black hover:text-blue-500 transition-all duration-300 flex items-center gap-2">
                                     AI App
                                 </Link>
                             </li>
@@ -87,21 +87,20 @@ const Footer = () => {
                         </h3>
                         <ul className="mt-4 text-sm text-black">
                             <li className="">
-                                <Link href="uit.edu.mm" className="hover:text-foreground transition-all duration-300">
+                                <Link href="mailto:htoothetnaung@uit.edu.mm" className="hover:text-blue-500 transition-all duration-300">
                                     📧 htoothetnaung@uit.edu.mm
                                 </Link>
                             </li>
                             <li className="mt-2">
-                                <Link href="tel:+959123456789" className="hover:text-foreground transition-all duration-300">
+                                <Link href="tel:+959123456789" className="hover:text-blue-500 transition-all duration-300">
                                     📞 +95 9123456789
                                 </Link>
                             </li>
                             <li className="mt-2">
-                                <Link href="https://maps.google.com" target="_blank" className="hover:text-foreground transition-all duration-300">
+                                <Link href="https://maps.google.com" target="_blank" className="hover:text-blue-500 transition-all duration-300">
                                     📍 UIT, Parami Road
                                 </Link>
                             </li>
-                            
                         </ul>
                     </div>
                 </div>
@@ -115,7 +114,7 @@ const Footer = () => {
             </div>
 
         </footer>
-    )
-}
+    );
+};
 
-export default Footer
+export default Footer;
