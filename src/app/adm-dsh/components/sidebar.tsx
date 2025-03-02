@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from "@/lib/utils"
@@ -9,7 +10,10 @@ import {
   Home,
   Truck,
   Users,
-  Settings
+  Settings,
+  ChevronLeft,
+  ChevronRight,
+  Menu
 } from 'lucide-react'
 
 const routes = [
@@ -52,33 +56,52 @@ const routes = [
 
 export function Sidebar() {
   const pathname = usePathname()
+  const [collapsed, setCollapsed] = useState(false)
+  
+  const toggleSidebar = () => setCollapsed(!collapsed)
 
   return (
-    <div className="space-y-4 py-4 flex flex-col h-full bg-gray-900 text-white w-64">
-      <div className="px-3 py-2 flex-1">
-        <Link href="/adm-dsh" className="flex items-center pl-3 mb-14">
-          <h1 className="text-2xl font-bold">
-            Admin Dashboard
-          </h1>
+    <div className={cn(
+      "relative flex flex-col h-full bg-gray-900 text-white transition-all duration-300 ease-in-out",
+      collapsed ? "w-20" : "w-64"
+    )}>
+      <button 
+        onClick={toggleSidebar}
+        className="absolute top-4 -right-3 bg-gray-900 text-white p-1 rounded-full border border-gray-700"
+      >
+        {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
+      </button>
+      
+      <div className="px-3 py-4 flex-1">
+        <Link href="/adm-dsh" className={cn(
+          "flex items-center mb-10 transition-all", 
+          collapsed ? "justify-center pl-0" : "pl-3"
+        )}>
+          {collapsed ? (
+            <Menu className="h-8 w-8" />
+          ) : (
+            <h1 className="text-2xl font-bold">Admin Dashboard</h1>
+          )}
         </Link>
+        
         <div className="space-y-1">
           {routes.map((route) => (
             <Link
               key={route.href}
               href={route.href}
               className={cn(
-                "text-sm group flex p-3 w-full justify-start font-medium cursor-pointer hover:text-white hover:bg-white/10 rounded-lg transition",
+                "group flex p-3 rounded-lg transition-all hover:text-white hover:bg-white/10",
+                collapsed ? "justify-center" : "w-full justify-start",
                 pathname === route.href ? "text-white bg-white/10" : "text-zinc-400",
               )}
+              title={collapsed ? route.label : undefined}
             >
-              <div className="flex items-center flex-1">
-                <route.icon className={cn("h-5 w-5 mr-3", route.color)} />
-                {route.label}
-              </div>
+              <route.icon className={cn("h-6 w-6", collapsed ? "" : "mr-3", route.color)} />
+              {!collapsed && <span className="text-sm font-medium">{route.label}</span>}
             </Link>
           ))}
         </div>
       </div>
     </div>
   )
-} 
+}

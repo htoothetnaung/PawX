@@ -1,44 +1,21 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Bar, Line } from 'react-chartjs-2'
-import { useEffect, useState } from "react"
-import { supabaseApi } from "@/services/supabase"
-import { Users } from "lucide-react"
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
-} from 'chart.js'
+import { supabaseApi } from '@/services/supabase'
+import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement } from 'chart.js'
+import { Doughnut, Bar } from 'react-chartjs-2'
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
-)
+// Register ChartJS components
+ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement)
 
-export default function AdminDashboard() {
+export default function AdminDashboardPage() {
+  const [loading, setLoading] = useState(true)
   const [stats, setStats] = useState({
     totalUsers: 0,
     totalReports: 0,
     totalShelters: 0,
     totalDeliveries: 0
-  })
-
-  const [userActivityData, setUserActivityData] = useState({
-    labels: [],
-    datasets: []
   })
 
   const [reportsData, setReportsData] = useState({
@@ -51,67 +28,123 @@ export default function AdminDashboard() {
         'rgba(54, 162, 235, 0.5)',  // blue for on the way
         'rgba(75, 192, 192, 0.5)',  // green for resolved
         'rgba(255, 99, 132, 0.5)',  // red for rejected
-      ]
+      ],
+      borderColor: [
+        'rgba(255, 206, 86, 1)',
+        'rgba(54, 162, 235, 1)',
+        'rgba(75, 192, 192, 1)',
+        'rgba(255, 99, 132, 1)',
+      ],
+      borderWidth: 1
     }]
   });
 
   useEffect(() => {
-    const fetchStats = async () => {
-      // Fetch statistics from Supabase
-      const [users, reports, shelters, deliveries] = await Promise.all([
-        supabaseApi.getTotalUsers(),
-        supabaseApi.getTotalReports(),
-        supabaseApi.getTotalShelters(),
-        supabaseApi.getTotalDeliveries()
-      ])
-
-      setStats({
-        totalUsers: users,
-        totalReports: reports,
-        totalShelters: shelters,
-        totalDeliveries: deliveries
-      })
+    const fetchData = async () => {
+      try {
+        setLoading(true)
+        
+        // Fetch all stats in parallel
+        const [
+          totalUsers, 
+          totalReports, 
+          totalShelters, 
+          totalDeliveries,
+          statusCounts
+        ] = await Promise.all([
+          supabaseApi.getTotalUsers(),
+          supabaseApi.getTotalReports(),
+          supabaseApi.getTotalShelters(),
+          supabaseApi.getTotalDeliveries(),
+          supabaseApi.getReportsByStatus()
+        ])
+        
+        // Update stats
+        setStats({
+          totalUsers,
+          totalReports,
+          totalShelters,
+          totalDeliveries
+        })
+        
+        // Update reports by status chart
+        setReportsData(prev => ({
+          ...prev,
+          datasets: [{
+            ...prev.datasets[0],
+            data: [
+              statusCounts.pending,
+              statusCounts.on_the_way,
+              statusCounts.resolved,
+              statusCounts.rejected
+            ]
+          }]
+        }))
+        
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error)
+      } finally {
+        setLoading(false)
+      }
     }
-
-    fetchStats()
+    
+    fetchData()
   }, [])
-
+  
   return (
-    <div className="p-6 space-y-6">
-      <h2 className="text-3xl font-bold">Dashboard Overview</h2>
+    <div className="space-y-8">
+      <h1 className="text-3xl font-bold">Dashboard Overview</h1>
       
-      <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Users</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalUsers}</div>
-          </CardContent>
-        </Card>
-        {/* Similar cards for reports, shelters, and deliveries */}
-      </div>
-
-      <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>User Activity</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Line data={userActivityData} />
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Reports by Status</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Bar data={reportsData} />
-          </CardContent>
-        </Card>
-      </div>
+      {loading ? (
+        <div className="flex justify-center items-center h-40">
+          <p>Loading dashboard data...</p>
+        </div>
+      ) : (
+        <>
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <StatCard title="Total Users" value={stats.totalUsers} />
+            <StatCard title="Total Reports" value={stats.totalReports} />
+            <StatCard title="Total Shelters" value={stats.totalShelters} />
+            <StatCard title="Total Deliveries" value={stats.totalDeliveries} />
+          </div>
+          
+          {/* Reports Chart */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Reports by Status</CardTitle>
+            </CardHeader>
+            <CardContent className="h-80 flex justify-center items-center">
+              <div className="w-full max-w-md">
+                <Doughnut 
+                  data={reportsData} 
+                  options={{ 
+                    maintainAspectRatio: false,
+                    plugins: {
+                      legend: {
+                        position: 'bottom',
+                      }
+                    }
+                  }} 
+                />
+              </div>
+            </CardContent>
+          </Card>
+        </>
+      )}
     </div>
   )
-} 
+}
+
+function StatCard({ title, value }: { title: string; value: number }) {
+  return (
+    <Card>
+      <CardHeader className="pb-2">
+        <CardTitle className="text-lg font-medium">{title}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <p className="text-3xl font-bold">{value}</p>
+      </CardContent>
+    </Card>
+  )
+}

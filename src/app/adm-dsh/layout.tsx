@@ -18,7 +18,7 @@ export default async function AdminLayout({
   const supabase = createClient()
   const { data: { user } } = await (await supabase).auth.getUser()
 
-  if (!user || user.role !== 'admin') {
+  if (!user || user.email !== 'htoothetdev@gmail.com') {
     redirect('/auth/restricted')
   }
 

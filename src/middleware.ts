@@ -39,7 +39,8 @@ export async function middleware(request: NextRequest) {
   )
 
   const { data: { session } } = await supabase.auth.getSession()
-  console.log('Session:', session); // Debug log
+  const { data: { user } } = await supabase.auth.getUser()
+  console.log('User:', user); // Debug log
 
   // Check if the path is admin-only
   const isAdminPath = adminPaths.some(path => 
@@ -47,25 +48,19 @@ export async function middleware(request: NextRequest) {
   )
 
   // Check if the path is public
-  const isPublicPath = publicPaths.some(path => 
-    request.nextUrl.pathname === path || 
-    request.nextUrl.pathname.startsWith('/api/')
-  )
-
+ // Update the isPublicPath check in middleware.ts
+// Replace the existing check (around line 41-43) with this:
+const isPublicPath = publicPaths.some(path => 
+  request.nextUrl.pathname === path || 
+  request.nextUrl.pathname.startsWith(path) ||  // This matches path prefixes
+  request.nextUrl.pathname.startsWith('/api/')
+)
   console.log('Is Admin Path:', isAdminPath); // Debug log
 
-  // For admin routes, check user role
+  // For admin routes, check user email instead of role
   if (isAdminPath && session) {
-    const { data: roleData, error } = await supabase
-      .from('user_roles')
-      .select('role')
-      .eq('user_id', session.user.id)
-      .single()
-    
-    console.log('Role data:', roleData); // Debug log
-    console.log('Role error:', error); // Debug log
-
-    if (!roleData || roleData.role !== 'admin') {
+    const isAdmin = user?.email === 'htoothetdev@gmail.com'
+    if (!isAdmin) {
       return NextResponse.redirect(new URL('/auth/restricted', request.url))
     }
   }
