@@ -2,7 +2,8 @@ import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 // Add the paths that should be public
-const publicPaths = ['/', '/login', '/signup', '/signup/confirm', '/auth/callback', '/auth/restricted']
+const publicPaths = ['/', '/login', '/signup', '/signup/confirm', '/auth/callback', '/auth/restricted', '/api/shelters']
+const adminPaths = ['/adm-dsh']
 
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({
@@ -38,12 +39,31 @@ export async function middleware(request: NextRequest) {
   )
 
   const { data: { session } } = await supabase.auth.getSession()
+  const { data: { user } } = await supabase.auth.getUser()
+  console.log('User:', user); // Debug log
+
+  // Check if the path is admin-only
+  const isAdminPath = adminPaths.some(path => 
+    request.nextUrl.pathname.startsWith(path)
+  )
 
   // Check if the path is public
-  const isPublicPath = publicPaths.some(path => 
-    request.nextUrl.pathname === path || 
-    request.nextUrl.pathname.startsWith('/api/')
-  )
+ // Update the isPublicPath check in middleware.ts
+// Replace the existing check (around line 41-43) with this:
+const isPublicPath = publicPaths.some(path => 
+  request.nextUrl.pathname === path || 
+  request.nextUrl.pathname.startsWith(path) ||  // This matches path prefixes
+  request.nextUrl.pathname.startsWith('/api/')
+)
+  console.log('Is Admin Path:', isAdminPath); // Debug log
+
+  // For admin routes, check user email instead of role
+  if (isAdminPath && session) {
+    const isAdmin = user?.email === 'htoothetdev@gmail.com'
+    if (!isAdmin) {
+      return NextResponse.redirect(new URL('/auth/restricted', request.url))
+    }
+  }
 
   // If not public and no session, redirect to auth/restricted
   if (!isPublicPath && !session) {

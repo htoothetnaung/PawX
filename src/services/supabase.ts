@@ -40,16 +40,50 @@ export interface Shelter {
 
 export const supabaseApi = {
   async getReports() {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) throw new Error('Not authenticated')
+
+    // First check if user is admin
+    const { data: roleData } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', user.id)
+      .single()
+
+    // If admin, get all reports, otherwise get user's reports
     const { data, error } = await supabase
       .from('reports')
       .select('*')
+      .eq('user_id', user.id) // Always filter by user_id first
       .order('created_at', { ascending: false })
 
-    if (error) throw error
+    if (error) {
+      console.error('Error fetching reports:', error)
+      throw error
+    }
+
+    // If admin, get all reports in a separate query
+    if (roleData?.role === 'admin') {
+      const { data: allData, error: allError } = await supabase
+        .from('reports')
+        .select('*')
+        .order('created_at', { ascending: false })
+
+      if (allError) {
+        console.error('Error fetching all reports:', allError)
+        throw allError
+      }
+
+      return allData as Report[]
+    }
+
     return data as Report[]
   },
 
   async getShelters() {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) throw new Error('Not authenticated')
+
     const { data, error } = await supabase
       .from('shelters')
       .select('*')
@@ -64,7 +98,6 @@ export const supabaseApi = {
       return []
     }
 
-    console.log('Fetched shelters:', data) // Debug log
     return data as Shelter[]
   },
 
@@ -106,5 +139,33 @@ export const supabaseApi = {
 
     if (error) throw error
     return data as Report[]
+  },
+
+  async getTotalUsers() {
+    const { count } = await supabase
+      .from('users')
+      .select('*', { count: 'exact', head: true })
+    return count || 0
+  },
+
+  async getTotalReports() {
+    const { count } = await supabase
+      .from('reports')
+      .select('*', { count: 'exact', head: true })
+    return count || 0
+  },
+
+  async getTotalShelters() {
+    const { count } = await supabase
+      .from('shelters')
+      .select('*', { count: 'exact', head: true })
+    return count || 0
+  },
+
+  async getTotalDeliveries() {
+    const { count } = await supabase
+      .from('deliveries')
+      .select('*', { count: 'exact', head: true })
+    return count || 0
   }
 } 

@@ -27,25 +27,49 @@ export default function Navbar() {
   const [user, setUser] = useState<any>(null);
   const supabase = createClient();
 
-  useEffect(() => {
-    // Check initial auth state
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      setUser(user);
-      if (user) {
-        toast.success('Successfully logged in!');
-      }
-    });
+    useEffect(() => {
+        // Check initial auth state
+        supabase.auth.getUser().then(({ data: { user } }) => {
+            setUser(user)
+            // In Navbar.tsx, modify the toast.success line:
+            if (user) {
+                toast.success('Successfully logged in!', {
+                    dismissible: true,
+                    duration: 2000,
+                    action: {
+                        label: 'Dismiss',
+                        onClick: () => toast.dismiss()
+                    }
+                })
+            }
+        })
 
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      setUser(session?.user ?? null);
-      
-      if (event === 'SIGNED_IN') {
-        toast.success('Successfully logged in!');
-      } else if (event === 'SIGNED_OUT') {
-        toast.success('Successfully logged out!');
-      }
-    });
+        // Listen for auth changes
+        // In Navbar.tsx, update both toast calls in the onAuthStateChange handler:
+
+const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    setUser(session?.user ?? null)
+    
+    if (event === 'SIGNED_IN') {
+        toast.success('Successfully logged in!', {
+            dismissible: true,
+            duration: 2000,
+            action: {
+                label: 'Dismiss',
+                onClick: () => toast.dismiss()
+            }
+        })
+    } else if (event === 'SIGNED_OUT') {
+        toast.success('Successfully logged out!', {
+            dismissible: true, 
+            duration: 2000,
+            action: {
+                label: 'Dismiss',
+                onClick: () => toast.dismiss()
+            }
+        })
+    }
+})
 
     return () => {
       subscription.unsubscribe();

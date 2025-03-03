@@ -82,13 +82,16 @@ export default function MapPage() {
     };
 
     const handleSelectLocationReport = () => {
+        console.log("Starting location selection");
         setIsSelectingLocation(true);
-        setIsReportFormOpen(true);
+        setIsReportFormOpen(false);
     };
 
     const handleLocationSelect = (location: { lat: number; lng: number }) => {
+        console.log("Location selected:", location);
         setSelectedLocation(location);
         setIsSelectingLocation(false);
+        setIsReportFormOpen(true);
     };
 
     return (
