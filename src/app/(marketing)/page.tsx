@@ -137,8 +137,8 @@ const HomePage = () => {
                             <span className="h-full w-full blur-md absolute bottom-0 inset-x-0 bg-gradient-to-tr from-primary/40"></span>
                             <span className="z-10 py-0.5 text-sm text-neutral-100 flex items-center justify-center gap-1.5">
                                 <Image src="/icons/sparkles-dark.svg" alt="✨" width={24} height={24} className="w-4 h-4" />
-                                Introducing Our New AI Model
-                                <ChevronRight className="w-4 h-4" />
+                                Introducing Our New AI Features
+                                {/* <ChevronRight className="w-4 h-4" /> */}
                             </span>
                         </button>
 
@@ -176,20 +176,45 @@ const HomePage = () => {
                             <div className="absolute top-1/2 left-1/2 -z-10 gradient w-3/4 -translate-x-1/2 h-3/4 -translate-y-1/2 inset-0 blur-[10rem]"></div>
                              <div className="-m-2 rounded-xl p-2 ring-1 ring-inset ring-foreground/20 lg:-m-4 lg:rounded-2xl bg-opacity-50 backdrop-blur-3xl">
                                 <Image
-                                    src="/assets/lost_and_found.jpg"
+                                    src="/assets/lostnfound.png"
                                     alt="banner image"
                                     width={1200}
                                     height={1200}
                                     quality={100}   
                                     className="rounded-md lg:rounded-xl bg-foreground/10 shadow-2xl ring-1 ring-border"
-                                />
-
+                                />            
                                 <BorderBeam size={250} duration={12} delay={9} />
+                            </div>        
+                        </div>
 
+                        <div className="relative flex items-center py-10 md:py-20 w-full">
+                            <div className="absolute top-1/2 left-1/2 -z-10 gradient w-3/4 -translate-x-1/2 h-3/4 -translate-y-1/2 inset-0 blur-[10rem]"></div>
+                             <div className="-m-2 rounded-xl p-2 ring-1 ring-inset ring-foreground/20 lg:-m-4 lg:rounded-2xl bg-opacity-50 backdrop-blur-3xl">
+                                <Image
+                                    src="/assets/location.png"
+                                    alt="banner image"
+                                    width={1200}
+                                    height={1200}
+                                    quality={100}   
+                                    className="rounded-md lg:rounded-xl bg-foreground/10 shadow-2xl ring-1 ring-border"
+                                />            
+                                <BorderBeam size={250} duration={12} delay={9} />
+                            </div>        
+                        </div>
 
-                            </div>
-
-                            
+                        <div className="relative flex items-center py-10 md:py-20 w-full">
+                            <div className="absolute top-1/2 left-1/2 -z-10 gradient w-3/4 -translate-x-1/2 h-3/4 -translate-y-1/2 inset-0 blur-[10rem]"></div>
+                             <div className="-m-2 rounded-xl p-2 ring-1 ring-inset ring-foreground/20 lg:-m-4 lg:rounded-2xl bg-opacity-50 backdrop-blur-3xl">
+                                <Image
+                                    src="/assets/analyzer.png"
+                                    alt="banner image"
+                                    width={1200}
+                                    height={1200}
+                                    quality={100}   
+                                    className="rounded-md lg:rounded-xl bg-foreground/10 shadow-2xl ring-1 ring-border"
+                                />            
+                                <BorderBeam size={250} duration={12} delay={9} />
+                            </div>        
                         </div>
                     </div>
                 </Container>

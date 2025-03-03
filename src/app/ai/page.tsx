@@ -122,115 +122,119 @@ export default function AIPage() {
 
       <div className="grid gap-4 md:grid-cols-2">
         {/* Pet Recommendations Form */}
-        <Card className="p-4">
-          <h2 className="text-xl font-semibold mb-4">Get Pet Recommendations</h2>
+        <Card className="p-4" style={{ background: 'linear-gradient(135deg,rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.2) 100%)' }}>
+          <h2 className="text-xl font-semibold mb-4 text-gray-800 text-gray-800">Get Pet Recommendations</h2>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-1">Pet Type</label>
-              <Select name="Type">
-                <SelectTrigger>
+              <label className="text-m font-semibold mb-4 text-gray-800 text-gray-800">Pet Type</label>
+              <Select name="Type" defaultValue="Cat">
+                <SelectTrigger className="bg-white text-black">
                   <SelectValue placeholder="Select pet type" />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Dog">Dog</SelectItem>
-                  <SelectItem value="Cat">Cat</SelectItem>
+                <SelectContent className='bg-white'>
+                  <SelectItem className='text-black' value="Dog">Dog</SelectItem>
+                  <SelectItem className='text-black' value="Cat">Cat</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">Gender</label>
-              <Select name="Gender">
-                <SelectTrigger>
+              <label className="text-m font-semibold mb-4 text-gray-800 text-gray-800">Gender</label>
+              <Select name="Gender" defaultValue="Female">
+                <SelectTrigger className="bg-white text-black">
                   <SelectValue placeholder="Select gender" />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Male">Male</SelectItem>
-                  <SelectItem value="Female">Female</SelectItem>
+                <SelectContent className='bg-white'>
+                  <SelectItem className='text-black' value="Male">Male</SelectItem>
+                  <SelectItem className='text-black' value="Female">Female</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">Age (months)</label>
+              <label className="text-m font-semibold mb-4 text-gray-800 text-gray-800">Age (months)</label>
               <Input 
                 name="Age" 
                 type="number"
                 min="0"
+                defaultValue="12"
                 placeholder="Age in months"
+                className="bg-white text-black"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">Maturity Size</label>
-              <Select name="MaturitySize">
-                <SelectTrigger>
+              <label className="text-m font-semibold mb-4 text-gray-800 text-gray-800">Maturity Size</label>
+              <Select name="MaturitySize" defaultValue="Medium">
+                <SelectTrigger className="bg-white text-black">
                   <SelectValue placeholder="Select size" />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Small">Small</SelectItem>
-                  <SelectItem value="Medium">Medium</SelectItem>
-                  <SelectItem value="Large">Large</SelectItem>
+                <SelectContent className='bg-white'>
+                  <SelectItem className='text-black' value="Small">Small</SelectItem>
+                  <SelectItem className='text-black' value="Medium">Medium</SelectItem>
+                  <SelectItem className='text-black' value="Large">Large</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">Fur Length</label>
-              <Select name="FurLength">
-                <SelectTrigger>
+              <label className="text-m font-semibold mb-4 text-gray-800 text-gray-800">Fur Length</label>
+              <Select name="FurLength" defaultValue="Medium">
+                <SelectTrigger className="bg-white text-black">
                   <SelectValue placeholder="Select fur length" />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Short">Short</SelectItem>
-                  <SelectItem value="Medium">Medium</SelectItem>
-                  <SelectItem value="Long">Long</SelectItem>
+                <SelectContent className='bg-white'>
+                  <SelectItem className='text-black' value="Short">Short</SelectItem>
+                  <SelectItem className='text-black' value="Medium">Medium</SelectItem>
+                  <SelectItem className='text-black' value="Long">Long</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">Fee</label>
+              <label className="text-m font-semibold mb-4 text-gray-800 text-gray-800">Fee</label>
               <Input 
                 name="Fee" 
                 type="number"
                 min="0"
+                defaultValue="500"
                 placeholder="Maximum fee"
+                className="bg-white text-black"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">Color</label>
-              <Select name="Color1_Name">
-                <SelectTrigger>
+              <label className="text-m font-semibold mb-4 text-gray-800 text-gray-800">Color</label>
+              <Select name="Color1_Name" defaultValue="White">
+                <SelectTrigger className="bg-white text-black">
                   <SelectValue placeholder="Select color" />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Black">Black</SelectItem>
-                  <SelectItem value="White">White</SelectItem>
-                  <SelectItem value="Brown">Brown</SelectItem>
-                  <SelectItem value="Golden">Golden</SelectItem>
-                  <SelectItem value="Gray">Gray</SelectItem>
+                <SelectContent className='bg-white'>
+                  <SelectItem className='text-black' value="Black">Black</SelectItem>
+                  <SelectItem className='text-black' value="White">White</SelectItem>
+                  <SelectItem  className='text-black' value="Brown">Brown</SelectItem>
+                  <SelectItem className='text-black' value="Golden">Golden</SelectItem>
+                  <SelectItem className='text-black' value="Gray">Gray</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
-            <Button type="submit" disabled={loading}>
+            <Button type="submit" disabled={loading} >
               {loading ? 'Processing...' : 'Get Recommendations'}
             </Button>
           </form>
         </Card>
 
         {/* Pet Matching Upload */}
-        <Card className="p-4">
-          <h2 className="text-xl font-semibold mb-4">Find Matching Pets</h2>
+        <Card className="p-4 bg-white" >
+          <h2 className="text-xl text-gray-800 font-semibold mb-4">Find Matching Pets</h2>
           <div className="space-y-4">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-800">
               Upload a pet image to find similar pets in our database
             </p>
             <form className="space-y-4">
               <div className="flex flex-col items-center gap-4">
-                <div className="relative w-96"> {/* Increased to w-96 (384px) */}
+                <div className="relative w-128">
                   <input
                     ref={fileInputRef}
                     type="file"
@@ -242,7 +246,7 @@ export default function AIPage() {
                   />
                   <label
                     htmlFor="file-upload"
-                    className="flex flex-col items-center justify-center w-full h-48 px-4 transition bg-white border-2 border-gray-300 border-dashed rounded-md appearance-none cursor-pointer hover:border-gray-400 focus:outline-none" // Increased to h-48 (192px)
+                    className="flex flex-col items-center justify-center w-full h-64 px-4 transition bg-white border-2 border-gray-300 border-dashed rounded-md appearance-none cursor-pointer hover:border-gray-400 focus:outline-none"
                   >
                     {imagePreview ? (
                       <div className="relative w-full h-full">
@@ -261,11 +265,11 @@ export default function AIPage() {
                               fileInputRef.current.value = '';
                             }
                           }}
-                          className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                          className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-2 hover:bg-red-600"
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
-                            className="h-4 w-4"
+                            className="h-5 w-5"
                             viewBox="0 0 20 20"
                             fill="currentColor"
                           >
@@ -278,9 +282,9 @@ export default function AIPage() {
                         </button>
                       </div>
                     ) : (
-                      <div className="space-y-1 text-center">
+                      <div className="space-y-2 text-center">
                         <svg
-                          className="mx-auto h-12 w-12 text-gray-400"
+                          className="mx-auto h-16 w-16 text-gray-400"
                           stroke="currentColor"
                           fill="none"
                           viewBox="0 0 48 48"
@@ -293,7 +297,7 @@ export default function AIPage() {
                             strokeLinejoin="round"
                           />
                         </svg>
-                        <div className="flex text-sm text-gray-600">
+                        <div className="flex text-m text-black font-bold">
                           <span className="relative cursor-pointer bg-white rounded-md font-medium text-primary hover:text-primary-dark focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-primary">
                             Upload a file
                           </span>
@@ -309,11 +313,11 @@ export default function AIPage() {
                   type="button" 
                   disabled={loading || !selectedFile}
                   onClick={() => selectedFile && handleImageUpload(selectedFile)}
-                  className="w-96" // Increased to w-96 (384px)
+                  className="w-128"
                 >
                   {loading ? (
                     <div className="flex items-center justify-center">
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2"></div>
                       Processing...
                     </div>
                   ) : (
@@ -338,22 +342,22 @@ export default function AIPage() {
         {/* Loading State */}
         {loading && (
           <Card className="p-4 col-span-2">
-            <div className="flex items-center justify-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-              <span className="ml-2">Processing...</span>
+            <div className="flex items-center justify-center bg-grey">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2"></div>
+              <span className="ml-2 ">Processing...</span>
             </div>
           </Card>
         )}
 
         {/* Results Display */}
         {results && (
-          <Card className="p-4 col-span-2">
+          <Card className="p-4 col-span-2 bg-white">
             <h2 className="text-xl font-semibold mb-4">Results</h2>
             {results.recommendations ? (
-              <div className="grid gap-4 md:grid-cols-3">
+              <div className="grid gap-6 md:grid-cols-3">
                 {results.recommendations.map((pet: any, index: number) => (
-                  <Card key={index} className="p-4">
-                    <div className="relative h-48 mb-4">
+                  <Card key={index} className="p-4 bg-white" >
+                    <div className="relative h-64 mb-4">
                       <ImageWithFallback
                         src={pet.images?.[0] || `${API_BASE_URL}/images/${pet.image_url?.split('/').pop()}`}
                         alt={pet.name || 'Pet'}
@@ -361,18 +365,19 @@ export default function AIPage() {
                         className="w-full h-full object-cover rounded-lg"
                       />
                     </div>
-                    <div className="space-y-1">
-                      <h3 className="font-semibold">{pet.name || 'Unknown'}</h3>
-                      <p className="text-sm text-gray-600">Breed: {pet.breed || 'Unknown'}</p>
-                      <p className="text-sm text-gray-600">Type: {pet.type || 'Unknown'}</p>
-                      <p className="text-sm text-gray-600">Gender: {pet.gender || 'Unknown'}</p>
-                      <p className="text-sm text-gray-600">Age: {pet.age || 0} months</p>
-                      <p className="text-sm text-gray-600">Color: {pet.color || 'Unknown'}</p>
-                      <p className="text-sm text-gray-600">Size: {pet.maturity_size || 'Unknown'}</p>
-                      <p className="text-sm text-gray-600">Fur: {pet.fur_length || 'Unknown'}</p>
-                      <p className="text-sm text-gray-600">Health: {pet.health || 'Unknown'}</p>
+                    <div className="space-y-2">
+                      <h3 className="text-m text-black font-bold">{pet.name || 'Unknown'}</h3>
+                      <p className="text-m text-black font-bold">Breed: {pet.breed || 'Unknown'}</p>
+                      <p className="text-m text-black font-bold">Type: {pet.type || 'Unknown'}</p>
+                      <p className="text-m text-black font-bold">Gender: {pet.gender || 'Unknown'}</p>
+                      <p className="text-m text-black font-bold">Age: {pet.age || 0} months</p>
+                      <p className="text-m text-black font-bold">Color: {pet.color || 'Unknown'}</p>
+                      <p className="text-m text-black font-bold">Size: {pet.maturity_size || 'Unknown'}</p>
+                      <p className="text-m text-black font-bold">Fur: {pet.fur_length || 'Unknown'}</p>
+                      <p className="text-m text-black font-bold">Health: {pet.health || 'Unknown'}</p>
+                      <p className="text-m text-black font-bold">Fee: {pet.fee || 0} $</p>
                       {pet.similarity !== undefined && (
-                        <p className="text-sm font-semibold mt-2">
+                        <p className="text-m text-black font-bold">
                           Match: {(pet.similarity * 100).toFixed(1)}%
                         </p>
                       )}
@@ -381,10 +386,10 @@ export default function AIPage() {
                 ))}
               </div>
             ) : results.matches ? (
-              <div className="grid gap-4 md:grid-cols-3">
+              <div className="grid gap-6 md:grid-cols-3 bg-white">
                 {results.matches.map((pet: any, index: number) => (
-                  <Card key={index} className="p-4">
-                    <div className="relative h-48 mb-4">
+                  <Card key={index} className="p-4 bg-white">
+                    <div className="relative h-64 mb-4">
                       <ImageWithFallback
                         src={`${API_BASE_URL}/images/${pet.image_url.split('/').pop()}`}
                         alt={pet.name || 'Pet'}
@@ -392,18 +397,18 @@ export default function AIPage() {
                         className="w-full h-full object-cover rounded-lg"
                       />
                     </div>
-                    <div className="space-y-1">
-                      <h3 className="font-semibold">{pet.name || 'Unknown'}</h3>
-                      <p className="text-sm text-gray-200">Breed: {pet.breed || 'Unknown'}</p>
-                      <p className="text-sm text-gray-600">Type: {pet.type || 'Unknown'}</p>
-                      <p className="text-sm text-gray-600">Gender: {pet.gender || 'Unknown'}</p>
-                      <p className="text-sm text-gray-600">Age: {pet.age || 0} months</p>
-                      <p className="text-sm text-gray-600">Color: {pet.color || 'Unknown'}</p>
-                      <p className="text-sm text-gray-600">Size: {pet.maturity_size || 'Unknown'}</p>
-                      <p className="text-sm text-gray-600">Fur: {pet.fur_length || 'Unknown'}</p>
-                      <p className="text-sm text-gray-600">Health: {pet.health || 'Unknown'}</p>
+                    <div className="space-y-2">
+                      <h3 className="text-m text-black font-bold">{pet.name || 'Unknown'}</h3>
+                      <p className="text-m text-black font-bold">Type: {pet.type || 'Unknown'}</p>
+                      <p className="text-m text-black font-bold">Breed: {pet.breed || 'Unknown'}</p>                
+                      <p className="text-m text-black font-bold">Gender: {pet.gender || 'Unknown'}</p>
+                      {/* <p className="text-m text-black font-bold">Age: {pet.age || 0} months</p> */}
+                      <p className="text-m text-black font-bold">Color: {pet.color || 'Unknown'}</p>
+                      <p className="text-m text-black font-bold">Size: {pet.maturity_size || 'Unknown'}</p>
+                      <p className="text-m text-black font-bold">Fur: {pet.fur_length || 'Unknown'}</p>
+                      <p className="text-m text-black font-bold">Health: {pet.health || 'Unknown'}</p>
                       {pet.similarity !== undefined && (
-                        <p className="text-sm font-semibold mt-2">
+                        <p className="text-m text-black font-bold">
                           Match: {(pet.similarity * 100).toFixed(1)}%
                         </p>
                       )}

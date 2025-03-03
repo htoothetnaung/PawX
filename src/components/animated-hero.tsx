@@ -31,7 +31,7 @@ export const AnimatedHero = () => {
                 transition={{ duration: 0.6, delay: 0.4 }}
             >
                 <Link 
-                    href="/sign-up" 
+                    href="/ai" 
                     className={buttonVariants({
                         size: "lg",
                         className: "bg-orange-500 hover:bg-orange-600 text-white transition-transform hover:scale-105"
@@ -40,14 +40,13 @@ export const AnimatedHero = () => {
                     Find a Pet
                 </Link>
                 <Link 
-                    href="/about" 
+                    href="/petSpa" 
                     className={buttonVariants({
                         size: "lg",
-                        variant: "outline",
-                        className: "bg-white hover:bg-orange-50 border-orange-200 text-orange-600 dark:bg-zinc-900 dark:hover:bg-orange-900/50 dark:border-orange-800 dark:text-orange-400 transition-transform hover:scale-105"
+                        className: "bg-orange-500 hover:bg-orange-600 text-white transition-transform hover:scale-105"
                     })}
                 >
-                    Learn More
+                    Spa Service
                 </Link>
             </motion.div>
         </div>

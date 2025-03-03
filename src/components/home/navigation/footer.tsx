@@ -1,6 +1,6 @@
-import Icons from "@/components/global/icons"
-import { Heart } from 'lucide-react'
-import Link from 'next/link'
+import Icons from "@/components/global/icons";
+import { Heart } from 'lucide-react';
+import Link from 'next/link';
 
 const Footer = () => {
     return (
@@ -13,7 +13,8 @@ const Footer = () => {
 
                 <div className="flex flex-col items-start justify-start md:max-w-[300px]">
                     <div className="flex items-start">
-                        <Icons.logo className="w-7 h-7" />
+                        {/* <Icons.logo className="w-7 h-7" /> */}
+                        <img src="/icons/X.png" alt="PawX Logo" width={38} height={38} />
                     </div>
                     <p className="text-red mt-4 text-sm text-start">
                         🐾 Connecting Hearts, One Paw at a Time 🌟
@@ -23,7 +24,7 @@ const Footer = () => {
                         </span>
                     </p>
                     <span className="mt-4 text-red-600 text-sm flex items-center">
-                        Made By Group 3
+                        Made By B9-UIT J2EE Group 3
                         <Heart className="w-3.5 h-3.5 ml-1 fill-primary text-primary" />
                     </span>
                 </div>
@@ -35,22 +36,22 @@ const Footer = () => {
                         </h3>
                         <ul className="mt-4 text-sm text-black">
                             <li className="mt-2">
-                                <Link href="/ai" className="text-black hover:text-foreground transition-all duration-300">
+                                <Link href="/ai" className="text-black hover:text-blue-500 transition-all duration-300">
                                     AI Pet Recognition
                                 </Link>
                             </li>
                             <li className="mt-2">
-                                <Link href="/map" className="text-black hover:text-foreground transition-all duration-300">
+                                <Link href="/map" className="text-black hover:text-blue-500 transition-all duration-300">
                                     Lost Pet Map
                                 </Link>
                             </li>
                             <li className="mt-2">
-                                <Link href="/petSpa" className="text-black hover:text-foreground transition-all duration-300">
+                                <Link href="/petSpa" className="text-black hover:text-blue-500 transition-all duration-300">
                                     Pet Spa Services
                                 </Link>
                             </li>
                             <li className="mt-2">
-                                <Link href="/c2c" className="text-black hover:text-foreground transition-all duration-300">
+                                <Link href="/c2c" className="text-black hover:text-blue-500 transition-all duration-300">
                                     Pet Marketplace
                                 </Link>
                             </li>
@@ -63,18 +64,18 @@ const Footer = () => {
                         </h3>
                         <ul className="mt-4 text-sm text-black">
                             <li className="mt-2">
-                                <Link href="https://github.com/your-repo" target="_blank" className="text-black hover:text-foreground transition-all duration-300 flex items-center gap-2">
+                                <Link href="https://github.com/htoothetnaung/PawX" target="_blank" className="text-black hover:text-blue-500 transition-all duration-300 flex items-center gap-2">
                                     GitHub
                                 </Link>
                             </li>
                             <li className="mt-2">
-                                <Link href="https://youtube.com/@your-channel" target="_blank" className="text-black hover:text-foreground transition-all duration-300 flex items-center gap-2">
-                                    YouTube
+                                <Link href="https://uit.edu.mm" target="_blank" className="text-black hover:text-blue-500 transition-all duration-300 flex items-center gap-2">
+                                    UIT
                                 </Link>
                             </li>
                             <li className="mt-2">
-                                <Link href="https://linkedin.com/company/your-company" target="_blank" className="text-black hover:text-foreground transition-all duration-300 flex items-center gap-2">
-                                    LinkedIn
+                                <Link href="https://pet-image-analyzer.streamlit.app/" target="_blank" className="text-black hover:text-blue-500 transition-all duration-300 flex items-center gap-2">
+                                    AI App
                                 </Link>
                             </li>
                         </ul>
@@ -86,21 +87,20 @@ const Footer = () => {
                         </h3>
                         <ul className="mt-4 text-sm text-black">
                             <li className="">
-                                <Link href="uit.edu.mm" className="hover:text-foreground transition-all duration-300">
-                                    📧 uit@email.com
+                                <Link href="mailto:htoothetnaung@uit.edu.mm" className="hover:text-blue-500 transition-all duration-300">
+                                    📧 htoothetnaung@uit.edu.mm
                                 </Link>
                             </li>
                             <li className="mt-2">
-                                <Link href="tel:+959123456789" className="hover:text-foreground transition-all duration-300">
+                                <Link href="tel:+959123456789" className="hover:text-blue-500 transition-all duration-300">
                                     📞 +95 9123456789
                                 </Link>
                             </li>
                             <li className="mt-2">
-                                <Link href="https://maps.google.com" target="_blank" className="hover:text-foreground transition-all duration-300">
+                                <Link href="https://maps.google.com" target="_blank" className="hover:text-blue-500 transition-all duration-300">
                                     📍 UIT, Parami Road
                                 </Link>
                             </li>
-                            
                         </ul>
                     </div>
                 </div>
@@ -109,12 +109,12 @@ const Footer = () => {
 
             <div className="mt-8 border-t border-border/40 pt-4 md:pt-8 md:flex md:items-center md:justify-between w-full">
                 <p className="text-sm text-black mt-8 md:mt-0">
-                    &copy; {new Date().getFullYear()} UIT Java EE Group 3
+                    &copy; {new Date().getFullYear()} UIT Batch-9 Java EE Group 3
                 </p>
             </div>
 
         </footer>
-    )
-}
+    );
+};
 
-export default Footer
+export default Footer;
