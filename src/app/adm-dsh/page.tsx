@@ -86,7 +86,7 @@ const [sheltersData, setSheltersData] = useState<{
           supabaseApi.getTotalShelters(),
           supabaseApi.getTotalDeliveries(),
           supabaseApi.getReportsByStatus(),
-          supabaseApi.getAllShelters()
+          supabaseApi.getShelters()
         ])
         
         // Update stats

@@ -167,5 +167,31 @@ export const supabaseApi = {
       .from('deliveries')
       .select('*', { count: 'exact', head: true })
     return count || 0
-  }
+  },
+  async getReportsByStatus() {
+    const { data, error } = await supabase
+      .from('reports')
+      .select('status')
+    
+    if (error) {
+      console.error('Error fetching reports by status:', error)
+      throw error
+    }
+    
+    // Count reports by status
+    const statusCounts = {
+      pending: 0,
+      on_the_way: 0,
+      resolved: 0,
+      rejected: 0
+    }
+    
+    data?.forEach(report => {
+      if (report.status in statusCounts) {
+        statusCounts[report.status as keyof typeof statusCounts]++
+      }
+    })
+    
+    return statusCounts
+  },
 } 
