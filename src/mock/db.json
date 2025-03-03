@@ -102,24 +102,16 @@
     "deliveries": [
       {
         "id": 1,
-        "lat": 16.854525865803815,
-        "lng": 96.13534927368165,
-        "shelterId": 1738259572793,
-        "invoiceNum": [
-          7126,
-          7127,
-          7128,
-          7129
-        ],
-        "status": "on the way",
-        "shopName": [
-          "Unique",
-          "CityMart",
-          "Ocean",
-          "MK"
-        ],
+        "reports": {
+          "lat": "", 
+          "lng": "", 
+          "status": ""
+        },
+        "driver_status": "busy|available",
         "driverName": "Ko Tun Lin",
-        "driverContact": "09977777777"
+        "driverContact": "09977777777",
+        "townships": []
+
       },
       {
         "id": 2,

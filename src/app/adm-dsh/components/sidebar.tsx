@@ -36,9 +36,9 @@ const routes = [
     color: "text-pink-700",
   },
   {
-    label: 'Deliveries',
+    label: 'Drivers & Deliveries',
     icon: Truck,
-    href: '/adm-dsh/deliveries',
+    href: '/adm-dsh/drivers',
     color: "text-orange-700",
   },
   {
@@ -62,12 +62,12 @@ export function Sidebar() {
 
   return (
     <div className={cn(
-      "relative flex flex-col h-full bg-gray-900 text-white transition-all duration-300 ease-in-out",
+      "relative flex flex-col h-screen bg-gray-900 text-white transition-all duration-300 ease-in-out",
       collapsed ? "w-20" : "w-64"
     )}>
       <button 
         onClick={toggleSidebar}
-        className="absolute top-4 -right-3 bg-gray-900 text-white p-1 rounded-full border border-gray-700"
+        className="absolute top-4 right-[-12px] bg-gray-900 text-white p-1 rounded-full border border-gray-700"
       >
         {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
       </button>
