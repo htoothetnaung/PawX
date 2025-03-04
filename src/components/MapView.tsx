@@ -145,7 +145,7 @@ const MapView: React.FC<MapViewProps> = ({ selectedShelterId, userLocation: init
         const isAdmin = user.email === 'htoothetdev@gmail.com';
         
         // Get shelters based on admin status
-        const sheltersData = await supabaseApi.getShelters();
+        const sheltersData = await supabaseApi.getAllShelters();
         console.log('Shelter fetch response:', sheltersData);
         
         if (!sheltersData || sheltersData.length === 0) {
@@ -194,29 +194,7 @@ const MapView: React.FC<MapViewProps> = ({ selectedShelterId, userLocation: init
     };
   }, []);
 
-  useEffect(() => {
-    const handleInvoiceSearch = (event: CustomEvent) => {
-      const searchedInvoice = event.detail.invoiceNumber;
-      const matchingDelivery = deliveries.find(delivery =>
-        delivery.invoiceNum.includes(searchedInvoice)
-      );
-
-      if (matchingDelivery) {
-        setFilteredDeliveryId(matchingDelivery.id);
-        calculateFilteredDeliveryRoute(matchingDelivery);
-      } else {
-        setFilteredDeliveryId(null);
-        setDeliveryRoutes({});
-        setRouteInfos([]);
-        alert('No delivery found with this invoice number');
-      }
-    };
-
-    window.addEventListener('invoiceSearch', handleInvoiceSearch as EventListener);
-    return () => {
-      window.removeEventListener('invoiceSearch', handleInvoiceSearch as EventListener);
-    };
-  }, [deliveries]);
+  
 
   // Then we can use them in console.log
   console.log("MapView props:", { isSelectingLocation, selectedPosition });
@@ -257,70 +235,8 @@ const MapView: React.FC<MapViewProps> = ({ selectedShelterId, userLocation: init
     setIsLoading(false);
   };
 
-  // Add new function to calculate route for filtered delivery
-  const calculateFilteredDeliveryRoute = async (delivery: Delivery) => {
-    setIsLoading(true);
-    try {
-      // Filter reports for this delivery's township group
-      const relevantReports = reports.filter(report => {
-        // Use your existing township grouping logic here
-        const deliveryGroup = getDeliveryGroup(delivery.id);
-        const reportGroup = getReportGroup(report.township);
-        return deliveryGroup === reportGroup;
-      });
+ 
 
-      if (relevantReports.length === 0) {
-        setDeliveryRoutes({});
-        setRouteInfos([]);
-        setIsLoading(false);
-        return;
-      }
-
-      let coordinates = `${delivery.lng},${delivery.lat}`;
-      relevantReports.forEach(report => {
-        coordinates += `;${report.lng},${report.lat}`;
-      });
-
-      const response = await axios.get(
-        `https://router.project-osrm.org/trip/v1/driving/${coordinates}?roundtrip=true&source=first`
-      );
-
-      if (response.data.trips && response.data.trips.length > 0) {
-        const route = decodePolyline(response.data.trips[0].geometry);
-        const routeInfo = {
-          deliveryId: delivery.id,
-          shopName: delivery.shopName[0],
-          totalTime: Math.round(response.data.trips[0].duration / 60),
-          reports: relevantReports.map(r => ({
-            description: r.description,
-            distance: calculateDistance(delivery.lat, delivery.lng, r.lat, r.lng)
-          }))
-        };
-
-        setDeliveryRoutes({ [delivery.id]: route });
-        setRouteInfos([routeInfo]);
-      }
-    } catch (error) {
-      console.error('Failed to calculate filtered delivery route:', error);
-      alert('Failed to calculate delivery route. Please try again.');
-    }
-    setIsLoading(false);
-  };
-
-  // Helper function to determine delivery group
-  const getDeliveryGroup = (deliveryId: number): number => {
-    // Return 0-3 based on your existing grouping logic
-    return (deliveryId - 1) % 4;
-  };
-
-  // Helper function to determine report group
-  const getReportGroup = (township: string): number => {
-    if (location_gp1.includes(township)) return 0;
-    if (location_gp2.includes(township)) return 1;
-    if (location_gp3.includes(township)) return 2;
-    if (location_gp4.includes(township)) return 3;
-    return 0; // Default group
-  };
 
   // Modified user location handling
   const handleGetUserLocation = () => {
@@ -801,51 +717,7 @@ const MapView: React.FC<MapViewProps> = ({ selectedShelterId, userLocation: init
           </Marker>
         ))}
 
-        {deliveries.map((delivery) => (
-          <Marker
-            key={`delivery-${delivery.id}`}
-            position={[delivery.lat, delivery.lng]}
-            icon={PurpleIcon}
-          >
-            <Popup>
-              <div>
-                <h4>Delivery #{delivery.id}</h4>
-                <p><strong>Driver:</strong> {delivery.driverName}</p>
-                <p><strong>Contact:</strong> {delivery.driverContact}</p>
-                <p><strong>Status:</strong> {delivery.status}</p>
-                <p><strong>Deliveries:</strong></p>
-                <ul style={{ margin: '5px 0', paddingLeft: '20px' }}>
-                  {delivery.invoiceNum.map((invoice, index) => (
-                    <li key={invoice}>
-                      Invoice #{invoice} - {delivery.shopName[index]}
-                    </li>
-                  ))}
-                </ul>
-                {userLocation && (
-                  <button onClick={() => calculateTravelTime([delivery.lat, delivery.lng])}>
-                    🚗 Get Directions
-                  </button>
-                )}
-              </div>
-            </Popup>
-          </Marker>
-        ))}
-
-        {Object.entries(deliveryRoutes).map(([deliveryId, route]) => (
-          <Polyline
-            key={`route-${deliveryId}`}
-            positions={route}
-            color={`hsl(${(parseInt(deliveryId) * 137) % 360}, 70%, 50%)`}
-            weight={4}
-            opacity={0.8}
-          >
-            <Popup>
-              Delivery Route {deliveryId}
-              <br />
-              {deliveries.find(d => d.id === parseInt(deliveryId))?.shopName[0]}
-            </Popup>
-          </Polyline>
-        ))}
+       
 
         {reports.map((report) => (
           <Marker

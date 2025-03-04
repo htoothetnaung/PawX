@@ -40,18 +40,8 @@ const routes = [
     icon: Truck,
     href: '/adm-dsh/drivers',
     color: "text-orange-700",
-  },
-  {
-    label: 'Users',
-    icon: Users,
-    href: '/adm-dsh/users',
-    color: "text-green-700",
-  },
-  {
-    label: 'Settings',
-    icon: Settings,
-    href: '/adm-dsh/settings',
-  },
+  }
+ 
 ];
 
 export function Sidebar() {

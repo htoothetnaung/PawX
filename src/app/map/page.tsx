@@ -94,6 +94,10 @@ export default function MapPage() {
         setIsReportFormOpen(true);
     };
 
+    const handleAdminDashboard = () => {
+        window.location.href = '/adm-dsh';
+    };
+
     return (
         <>
             <div className="mb-4 flex gap-4 items-center flex-wrap">
@@ -111,6 +115,14 @@ export default function MapPage() {
                 >
                     🏠 Find Nearest Shelters
                 </button>
+
+                <Button 
+                    onClick={handleAdminDashboard}
+                    variant="outline"
+                    className="bg-gray-500 text-white px-4 py-3 rounded hover:bg-black-600 ml-auto"
+                >
+                    🔐 Admin Dashboard
+                </Button>
                 
                 {nearestShelters.length > 0 && (
                     <select 
